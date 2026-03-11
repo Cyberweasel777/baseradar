@@ -626,7 +626,7 @@
       async function loadProof() {
         try {
           const results = await Promise.allSettled([
-            fetchEndpoint('/zora/trending'),
+            fetchEndpoint('/zora/trending-coins'),
             fetchEndpoint('/whale-trades'),
             fetchEndpoint('/zora/new-coins')
           ]);

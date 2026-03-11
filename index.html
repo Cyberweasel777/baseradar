@@ -658,7 +658,7 @@
       function authHeaders() {
         const headers = {};
         if (state.apiKey) headers['X-API-Key'] = state.apiKey;
-        if (state.userId) headers['x-external-user-id'] = state.userId;
+        headers['x-external-user-id'] = state.userId || 'baseradar-anon';
         return headers;
       }
 
@@ -820,7 +820,7 @@
         }
 
         try {
-          const payload = await fetchEndpoint('/zora/trending');
+          const payload = await fetchEndpoint('/zora/trending-coins');
           const coins = safeArray(payload);
           state.trending = coins;
           renderStats(coins);
@@ -940,7 +940,7 @@
         dom.newLaunchesFooter.innerHTML = '';
 
         try {
-          const payload = await fetchEndpoint('/zora/new-coins');
+          const payload = await fetchEndpoint('/zora/trending-coins?limit=5');
           renderNewLaunches(safeArray(payload));
         } catch (err) {
           dom.newLaunchesContent.innerHTML = '';
