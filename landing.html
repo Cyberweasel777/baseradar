@@ -660,11 +660,15 @@
           const payload = {};
           if (email) payload.email = email;
 
-          const response = await fetch(CHECKOUT_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
+          var visitorId = localStorage.getItem('baseradar.visitorId') || ('web-' + Math.random().toString(36).slice(2, 10));
+          localStorage.setItem('baseradar.visitorId', visitorId);
+          var checkoutUrl = CHECKOUT_ENDPOINT +
+            '&user=' + encodeURIComponent(visitorId) +
+            '&successUrl=' + encodeURIComponent(SUCCESS_URL) +
+            '&cancelUrl=' + encodeURIComponent(CANCEL_URL);
+          if (email) checkoutUrl += '&email=' + encodeURIComponent(email);
+
+          const response = await fetch(checkoutUrl);
 
           const data = await response.json().catch(function () {
             return {};

@@ -685,19 +685,19 @@
         return payload;
       }
 
-      async function startCheckout(email) {
+      async function startCheckout(ctaName) {
         dom.getProButton.disabled = true;
         dom.getProButton.textContent = 'Redirecting...';
         try {
-          const body = {};
-          const normalized = (email || '').trim();
-          if (normalized) body.email = normalized;
-          const response = await fetch(CHECKOUT_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-          });
-          const payload = await response.json().catch(function () {
+          ctaTrack(ctaName || 'checkout');
+          var visitorId = state.userId || localStorage.getItem('baseradar.visitorId') || ('web-' + Math.random().toString(36).slice(2, 10));
+          localStorage.setItem('baseradar.visitorId', visitorId);
+          var checkoutUrl = CHECKOUT_ENDPOINT +
+            '&user=' + encodeURIComponent(visitorId) +
+            '&successUrl=' + encodeURIComponent(SUCCESS_URL) +
+            '&cancelUrl=' + encodeURIComponent(CANCEL_URL);
+          var response = await fetch(checkoutUrl);
+          var payload = await response.json().catch(function () {
             return {};
           });
           if (!response.ok || !payload.url) {
@@ -707,7 +707,7 @@
         } catch (err) {
           dom.getProButton.disabled = false;
           dom.getProButton.textContent = 'Get Pro';
-          dom.trendingStatus.textContent = 'Checkout error: ' + err.message + ' (success: ' + SUCCESS_URL + ', cancel: ' + CANCEL_URL + ')';
+          dom.trendingStatus.textContent = 'Checkout error: ' + err.message;
         }
       }
 
