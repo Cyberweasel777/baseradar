@@ -1005,8 +1005,25 @@
         dom.whaleContent.innerHTML = '';
         dom.whaleContent.appendChild(makeSkeletonLines(6));
         try {
-          const payload = await fetchEndpoint('/whale-trades');
-          renderWhales(safeArray(payload));
+          const payload = await fetchEndpoint('/hyperliquid/whale-alerts');
+          // Extract whale positions from summary
+          var whaleData = [];
+          if (payload && payload.summary && payload.summary.topPositions) {
+            whaleData = payload.summary.topPositions.map(function(p) {
+              return {
+                wallet: p.coin || 'Unknown',
+                amount_usd: p.positionValue || 0,
+                token: p.coin || '?',
+                direction: p.side || 'LONG',
+                leverage: p.leverage || 1,
+                timestamp: payload.timestamp || new Date().toISOString()
+              };
+            });
+          }
+          if (payload && payload.summary) {
+            whaleData._summary = payload.summary;
+          }
+          renderWhales(whaleData);
         } catch (err) {
           dom.whaleContent.innerHTML = '';
           dom.whaleContent.appendChild(createError('Unable to load whale activity: ' + err.message));
@@ -1165,8 +1182,24 @@
         dom.correlationContent.appendChild(makeSkeletonLines(10));
 
         try {
-          const payload = await fetchEndpoint('/correlation-leaders');
-          renderCorrelation(payload);
+          const payload = await fetchEndpoint('/hyperliquid/correlation-matrix');
+          // Convert matrix object {TOKEN: {TOKEN: value}} to pairs array
+          var corrData = payload;
+          if (payload && payload.matrix && typeof payload.matrix === 'object') {
+            var pairs = [];
+            var tokens = Object.keys(payload.matrix);
+            for (var i = 0; i < tokens.length; i++) {
+              for (var j = i + 1; j < tokens.length; j++) {
+                pairs.push({
+                  tokenA: tokens[i],
+                  tokenB: tokens[j],
+                  correlation: payload.matrix[tokens[i]][tokens[j]] || 0
+                });
+              }
+            }
+            corrData = pairs;
+          }
+          renderCorrelation(corrData);
         } catch (err) {
           dom.correlationContent.innerHTML = '';
           dom.correlationContent.appendChild(createError('Unable to load correlation heatmap: ' + err.message));
