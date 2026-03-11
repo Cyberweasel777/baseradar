@@ -370,11 +370,11 @@
           <div class="kpi-value skeleton" id="kpiCoins"></div>
         </article>
         <article class="card">
-          <div class="kpi-label">Whale Volume Detected</div>
+          <div class="kpi-label">Whale Volume Tracked</div>
           <div class="kpi-value skeleton" id="kpiWhales"></div>
         </article>
         <article class="card">
-          <div class="kpi-label">New Launches / Day</div>
+          <div class="kpi-label">Active Whales</div>
           <div class="kpi-value skeleton" id="kpiLaunches"></div>
         </article>
       </div>
@@ -582,7 +582,7 @@
       function authHeaders() {
         const headers = {};
         if (apiKey) headers['X-API-Key'] = apiKey;
-        if (userId) headers['x-external-user-id'] = userId;
+        headers['x-external-user-id'] = userId || 'baseradar-anon';
         return headers;
       }
 
@@ -601,36 +601,14 @@
         return payload;
       }
 
-      function renderSocialProof(coins, whales, launches) {
-        const coinCount = coins.length;
-        const whaleVol = whales.reduce(function (sum, trade) {
-          return sum + Number(pick(trade, ['amount', 'size', 'volumeUsd'], 0) || 0);
-        }, 0);
-
-        let launchesPerDay = 0;
-        if (launches.length) {
-          const times = launches
-            .map(function (item) { return new Date(pick(item, ['createdAt', 'launchTime', 'created_at'], 0)).getTime(); })
-            .filter(Number.isFinite)
-            .sort(function (a, b) { return b - a; });
-
-          if (times.length >= 2) {
-            const first = times[0];
-            const last = times[times.length - 1];
-            const spanHours = Math.max(1, (first - last) / 3600000);
-            launchesPerDay = Math.round((launches.length / spanHours) * 24);
-          } else {
-            launchesPerDay = launches.length;
-          }
-        }
-
+      function renderSocialProof(coins, whaleVolume, whaleCount, launches) {
         dom.kpiCoins.classList.remove('skeleton');
         dom.kpiWhales.classList.remove('skeleton');
         dom.kpiLaunches.classList.remove('skeleton');
 
-        dom.kpiCoins.textContent = compact(coinCount);
-        dom.kpiWhales.textContent = money(whaleVol);
-        dom.kpiLaunches.textContent = compact(launchesPerDay || launches.length);
+        dom.kpiCoins.textContent = compact(coins.length) + ' coins';
+        dom.kpiWhales.textContent = money(whaleVolume);
+        dom.kpiLaunches.textContent = compact(whaleCount) + ' whales';
       }
 
       function setError(msg) {
@@ -647,23 +625,23 @@
         try {
           const results = await Promise.allSettled([
             fetchEndpoint('/zora/trending-coins'),
-            fetchEndpoint('/whale-trades'),
-            fetchEndpoint('/zora/new-coins')
+            fetchEndpoint('/hyperliquid/whale-alerts'),
+            fetchEndpoint('/zora/trending-coins?limit=5')
           ]);
 
-          const trending = results[0].status === 'fulfilled' ? arrayFrom(results[0].value) : [];
-          const whales = results[1].status === 'fulfilled' ? arrayFrom(results[1].value) : [];
-          const launches = results[2].status === 'fulfilled' ? arrayFrom(results[2].value) : [];
+          var trendingRaw = results[0].status === 'fulfilled' ? results[0].value : {};
+          var whalesRaw = results[1].status === 'fulfilled' ? results[1].value : {};
+          var launchesRaw = results[2].status === 'fulfilled' ? results[2].value : {};
 
-          renderSocialProof(trending, whales, launches);
+          // Extract arrays from API responses
+          var trending = trendingRaw && trendingRaw.coins ? trendingRaw.coins : arrayFrom(trendingRaw);
+          var whaleVolume = whalesRaw && whalesRaw.summary ? whalesRaw.summary.totalTrackedValue || 0 : 0;
+          var whaleCount = whalesRaw && whalesRaw.summary ? whalesRaw.summary.whalesTracked || 0 : 0;
+          var launches = launchesRaw && launchesRaw.coins ? launchesRaw.coins : arrayFrom(launchesRaw);
 
-          const errorMessages = results
-            .filter(function (r) { return r.status === 'rejected'; })
-            .map(function (r) { return r.reason && r.reason.message ? r.reason.message : 'Request failed'; });
+          renderSocialProof(trending, whaleVolume, whaleCount, launches);
 
-          if (errorMessages.length) {
-            dom.proofError.innerHTML = '<div class="error">Some feeds are restricted: ' + errorMessages.join(' | ') + '. Add `?api_key=...` if your access requires headers.</div>';
-          }
+          // Silently ignore endpoint errors — free data still renders
         } catch (err) {
           setError('Unable to load social proof data: ' + err.message);
         }
