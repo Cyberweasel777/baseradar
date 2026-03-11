@@ -554,7 +554,7 @@
           localStorage.setItem(STORAGE_API_KEY, paramKey);
           return paramKey;
         }
-        return localStorage.getItem(STORAGE_API_KEY);
+        return localStorage.getItem(STORAGE_API_KEY) || API_KEY;
       }
 
       function ctaTrack(name) {
