@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BaseRadar Pro | Stop Missing Base Chain Alpha</title>
+  <meta name="description" content="Unlock real-time Base chain intelligence with whale tracking, trending signals, and launch alerts.">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W0MNKBJC2E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-W0MNKBJC2E');
+    gtag('config', 'AW-18000142406');
+  </script>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card: #12121a;
+      --border: #1a1a2e;
+      --primary: #00d4ff;
+      --success: #00ff88;
+      --danger: #ff4444;
+      --text: #f4f7ff;
+      --muted: #a2afcb;
+      --shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 15% -10%, rgba(0, 212, 255, 0.16), transparent 34%),
+        radial-gradient(circle at 90% 15%, rgba(0, 255, 136, 0.08), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1080px, 100% - 2rem);
+      margin: 0 auto;
+      padding: 1.2rem 0 2.5rem;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .brand {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .brand span { color: var(--primary); }
+
+    .hero {
+      border: 1px solid var(--border);
+      background: linear-gradient(160deg, rgba(0, 212, 255, 0.1), rgba(18, 18, 26, 0.92));
+      border-radius: 1rem;
+      padding: 1.15rem;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 0.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: -40% -15% auto auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 255, 136, 0.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 3.8vw, 2.6rem);
+      line-height: 1.08;
+      max-width: 16ch;
+    }
+
+    .subhead {
+      color: var(--muted);
+      max-width: 56ch;
+      line-height: 1.45;
+    }
+
+    .cta-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      max-width: 420px;
+    }
+
+    .email-input {
+      border: 1px solid var(--border);
+      background: rgba(10, 10, 15, 0.75);
+      color: var(--text);
+      border-radius: 0.66rem;
+      padding: 0.7rem 0.8rem;
+      font-size: 0.92rem;
+    }
+
+    .button {
+      border: 1px solid var(--primary);
+      border-radius: 0.66rem;
+      background: linear-gradient(120deg, rgba(0, 212, 255, 0.22), rgba(0, 212, 255, 0.06));
+      color: #ebfbff;
+      font-weight: 800;
+      font-size: 0.93rem;
+      padding: 0.72rem 0.9rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .button:hover { transform: translateY(-1px); }
+
+    .button:disabled {
+      opacity: 0.7;
+      transform: none;
+      cursor: wait;
+    }
+
+    .ghost {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text);
+    }
+
+    .meta-line {
+      color: var(--muted);
+      font-size: 0.82rem;
+      min-height: 1rem;
+    }
+
+    .section {
+      margin-top: 1rem;
+      display: grid;
+      gap: 0.72rem;
+    }
+
+    .proof-grid,
+    .features,
+    .pricing-grid,
+    .faq,
+    .quick-links {
+      display: grid;
+      gap: 0.72rem;
+      grid-template-columns: 1fr;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 0.9rem;
+      background: var(--card);
+      padding: 0.9rem;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.32rem;
+    }
+
+    .kpi-value {
+      font-size: 1.42rem;
+      font-weight: 800;
+      min-height: 1.5rem;
+    }
+
+    .skeleton {
+      background: linear-gradient(95deg, rgba(255, 255, 255, 0.04) 30%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.04) 70%);
+      background-size: 200% 100%;
+      animation: shimmer 1.1s infinite;
+      border-radius: 0.4rem;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 120% 0; }
+      to { background-position: -120% 0; }
+    }
+
+    .feature-title {
+      margin-bottom: 0.35rem;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .feature-text {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .pricing-tag {
+      color: var(--success);
+      font-size: 0.8rem;
+      border: 1px solid rgba(0, 255, 136, 0.4);
+      border-radius: 999px;
+      padding: 0.18rem 0.55rem;
+      display: inline-block;
+      margin-bottom: 0.45rem;
+    }
+
+    .price {
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 0.45rem;
+    }
+
+    .price small {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .compare {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+    }
+
+    .compare th,
+    .compare td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 0.54rem 0.3rem;
+      text-align: left;
+    }
+
+    .compare th {
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .yes {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .no {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .faq h3 {
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .faq p {
+      color: var(--muted);
+      line-height: 1.4;
+      font-size: 0.9rem;
+    }
+
+    .final-cta {
+      margin-top: 1rem;
+      border: 1px solid rgba(0, 212, 255, 0.35);
+      border-radius: 0.95rem;
+      background: linear-gradient(145deg, rgba(0, 212, 255, 0.12), rgba(10, 10, 15, 0.85));
+      padding: 1rem;
+      text-align: center;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 0.8rem;
+      min-height: 1rem;
+    }
+
+    .error {
+      color: #ffd9d9;
+      border: 1px solid rgba(255, 68, 68, 0.4);
+      background: rgba(255, 68, 68, 0.1);
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      font-size: 0.82rem;
+    }
+
+    @media (min-width: 780px) {
+      .proof-grid,
+      .features,
+      .faq,
+      .quick-links {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1.1fr 1.4fr;
+      }
+
+      .hero { padding: 1.4rem; }
+
+      .cta-row {
+        grid-template-columns: 1fr auto;
+        max-width: 520px;
+      }
+
+      .cta-row .email-input {
+        grid-column: 1 / 2;
+      }
+
+      .cta-row .button {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+      }
+
+      .cta-row .meta-line {
+        grid-column: 1 / 3;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div class="brand">Base<span>Radar</span></div>
+      <a href="index.html" data-cta="landing-view-dashboard">View Dashboard</a>
+    </div>
+
+    <section class="hero">
+      <h1>Stop Missing Base Chain Alpha</h1>
+      <p class="subhead">BaseRadar tracks the earliest moves across trending coins, fresh launches, and whale flow so you can react before the crowd.</p>
+      <div class="cta-row">
+        <input id="heroEmail" class="email-input" type="email" inputmode="email" autocomplete="email" placeholder="Email (optional for checkout receipt)">
+        <button id="heroCta" class="button" type="button" data-cta="hero-start-trial">Start Your Free Trial</button>
+        <div class="meta-line">$9.99/mo after 7-day free trial.</div>
+      </div>
+      <div id="heroStatus" class="status" aria-live="polite"></div>
+    </section>
+
+    <section class="section">
+      <h2>Used Daily By Base Traders</h2>
+      <div class="proof-grid" id="proofGrid" aria-live="polite">
+        <article class="card">
+          <div class="kpi-label">Coins Tracked</div>
+          <div class="kpi-value skeleton" id="kpiCoins"></div>
+        </article>
+        <article class="card">
+          <div class="kpi-label">Whale Volume Detected</div>
+          <div class="kpi-value skeleton" id="kpiWhales"></div>
+        </article>
+        <article class="card">
+          <div class="kpi-label">New Launches / Day</div>
+          <div class="kpi-value skeleton" id="kpiLaunches"></div>
+        </article>
+      </div>
+      <div id="proofError"></div>
+    </section>
+
+    <section class="section">
+      <h2>What You Unlock</h2>
+      <div class="features">
+        <article class="card">
+          <h3 class="feature-title">Trending Intelligence</h3>
+          <p class="feature-text">Ranked leaderboard with market cap, volume, and change momentum, refreshed continuously to surface fast-moving Base rotations.</p>
+        </article>
+        <article class="card">
+          <h3 class="feature-title">Whale Tracking</h3>
+          <p class="feature-text">See high-value wallet entries and exits in real time with direction context so you can mirror or fade concentrated flow.</p>
+        </article>
+        <article class="card">
+          <h3 class="feature-title">New Launch Alerts</h3>
+          <p class="feature-text">Get immediate visibility into fresh launches, creator activity, and early liquidity spikes before they trend publicly.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Pricing</h2>
+      <div class="pricing-grid">
+        <article class="card">
+          <span class="pricing-tag">Pro Plan</span>
+          <div class="price">$9.99 <small>/mo</small></div>
+          <p class="feature-text" style="margin-bottom:0.65rem;">Includes a 7-day free trial. Cancel anytime.</p>
+          <button id="pricingCta" class="button" type="button" data-cta="pricing-start-trial">Start Your Free Trial</button>
+          <div class="meta-line" style="margin-top:0.5rem;">Checkout redirects to Stripe.</div>
+        </article>
+        <article class="card">
+          <table class="compare" aria-label="Free and Pro feature comparison">
+            <thead>
+              <tr><th>Feature</th><th>Free</th><th>Pro</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Trending Coins</td><td>Top 5</td><td class="yes">Full list</td></tr>
+              <tr><td>New Launches</td><td>3 rows + 15m delay</td><td class="yes">Real-time + full history</td></tr>
+              <tr><td>Whale Activity</td><td>2 rows</td><td class="yes">Full feed + filters + export</td></tr>
+              <tr><td>Correlation Heatmap</td><td class="no">Preview only</td><td class="yes">Interactive matrix</td></tr>
+              <tr><td>AI Intel Endpoints</td><td class="no">Locked</td><td class="yes">Included</td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>FAQ</h2>
+      <div class="faq">
+        <article class="card">
+          <h3>How does the free trial work?</h3>
+          <p>You start with 7 days of full Pro access. If you cancel before trial end, you are not billed.</p>
+        </article>
+        <article class="card">
+          <h3>Can I cancel anytime?</h3>
+          <p>Yes. Billing is monthly at $9.99 and can be canceled at any time from your Stripe customer portal.</p>
+        </article>
+        <article class="card">
+          <h3>What chain is covered?</h3>
+          <p>BaseRadar is focused on Base chain opportunities, including Zora trends, launches, whale flows, and correlations.</p>
+        </article>
+        <article class="card">
+          <h3>Do I need to connect a wallet?</h3>
+          <p>No wallet connect is required to browse data. Checkout uses Stripe and accepts standard payment methods.</p>
+        </article>
+        <article class="card">
+          <h3>Where do alerts come from?</h3>
+          <p>Signals are generated from Base market telemetry and BotIndex intelligence endpoints with recurring refreshes.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <h2>Start Trading Base With Better Signal</h2>
+      <p class="subhead" style="margin:0 auto;">Upgrade in under a minute and unlock the full BaseRadar dataset today.</p>
+      <button id="finalCta" class="button" type="button" data-cta="final-start-trial">Start Your Free Trial</button>
+      <a href="index.html" data-cta="final-back-dashboard">Continue with Free Dashboard</a>
+      <div id="finalStatus" class="status" aria-live="polite"></div>
+    </section>
+
+    <section class="section">
+      <div class="quick-links">
+        <a class="card" href="https://king-backend.fly.dev/api/botindex/" target="_blank" rel="noopener" data-cta="landing-api-link">API</a>
+        <a class="card" href="https://t.me/MemeRadarBot" target="_blank" rel="noopener" data-cta="landing-telegram-link">Telegram (@MemeRadarBot)</a>
+        <a class="card" href="https://x.com" target="_blank" rel="noopener" data-cta="landing-twitter-link">Twitter</a>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      const API_BASE = 'https://king-backend.fly.dev/api/botindex';
+      const CHECKOUT_ENDPOINT = 'https://king-backend.fly.dev/api/baseradar/checkout';
+      const SUCCESS_URL = 'https://baseradar.polyhacks.app/success.html';
+      const CANCEL_URL = 'https://baseradar.polyhacks.app/landing.html';
+      const STORAGE_API_KEY = 'baseradar.apiKey';
+      const STORAGE_USER = 'baseradar.userId';
+      const STORAGE_SUB = 'baseradar.subscription';
+
+      const dom = {
+        heroEmail: document.getElementById('heroEmail'),
+        heroCta: document.getElementById('heroCta'),
+        pricingCta: document.getElementById('pricingCta'),
+        finalCta: document.getElementById('finalCta'),
+        heroStatus: document.getElementById('heroStatus'),
+        finalStatus: document.getElementById('finalStatus'),
+        kpiCoins: document.getElementById('kpiCoins'),
+        kpiWhales: document.getElementById('kpiWhales'),
+        kpiLaunches: document.getElementById('kpiLaunches'),
+        proofError: document.getElementById('proofError')
+      };
+
+      let apiKey = null;
+      let userId = null;
+
+      function getUserId() {
+        const stored = localStorage.getItem(STORAGE_USER);
+        if (stored) return stored;
+        const generated = 'web-' + Math.random().toString(36).slice(2, 10);
+        localStorage.setItem(STORAGE_USER, generated);
+        return generated;
+      }
+
+      function getApiKey() {
+        const params = new URLSearchParams(window.location.search);
+        const paramKey = params.get('api_key') || params.get('apikey');
+        if (paramKey) {
+          localStorage.setItem(STORAGE_API_KEY, paramKey);
+          return paramKey;
+        }
+        return localStorage.getItem(STORAGE_API_KEY);
+      }
+
+      function trackCta(name) {
+        if (typeof gtag !== 'function') return;
+        gtag('event', 'cta_click', {
+          event_category: 'engagement',
+          event_label: name
+        });
+        gtag('event', 'conversion', {
+          send_to: 'AW-18000142406',
+          value: 9.99,
+          currency: 'USD'
+        });
+      }
+
+      function compact(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return '0';
+        return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+      }
+
+      function money(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return '$0.00';
+        if (Math.abs(n) >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+        if (Math.abs(n) >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+        if (Math.abs(n) >= 1e3) return '$' + (n / 1e3).toFixed(1) + 'K';
+        return '$' + n.toFixed(2);
+      }
+
+      function arrayFrom(payload) {
+        if (Array.isArray(payload)) return payload;
+        if (!payload || typeof payload !== 'object') return [];
+        const keys = ['coins', 'data', 'results', 'items', 'trades'];
+        for (const key of keys) {
+          if (Array.isArray(payload[key])) return payload[key];
+        }
+        return [];
+      }
+
+      function pick(obj, keys, fallback) {
+        if (!obj || typeof obj !== 'object') return fallback;
+        for (const key of keys) {
+          if (obj[key] !== undefined && obj[key] !== null) return obj[key];
+        }
+        return fallback;
+      }
+
+      function authHeaders() {
+        const headers = {};
+        if (apiKey) headers['X-API-Key'] = apiKey;
+        if (userId) headers['x-external-user-id'] = userId;
+        return headers;
+      }
+
+      async function fetchEndpoint(path) {
+        const url = new URL(API_BASE + path);
+        if (userId) url.searchParams.set('user', userId);
+
+        const response = await fetch(url.toString(), { headers: authHeaders() });
+        const payload = await response.json().catch(function () {
+          return {};
+        });
+
+        if (!response.ok || (payload && payload.error)) {
+          throw new Error((payload && (payload.message || payload.error)) || 'Request failed');
+        }
+        return payload;
+      }
+
+      function renderSocialProof(coins, whales, launches) {
+        const coinCount = coins.length;
+        const whaleVol = whales.reduce(function (sum, trade) {
+          return sum + Number(pick(trade, ['amount', 'size', 'volumeUsd'], 0) || 0);
+        }, 0);
+
+        let launchesPerDay = 0;
+        if (launches.length) {
+          const times = launches
+            .map(function (item) { return new Date(pick(item, ['createdAt', 'launchTime', 'created_at'], 0)).getTime(); })
+            .filter(Number.isFinite)
+            .sort(function (a, b) { return b - a; });
+
+          if (times.length >= 2) {
+            const first = times[0];
+            const last = times[times.length - 1];
+            const spanHours = Math.max(1, (first - last) / 3600000);
+            launchesPerDay = Math.round((launches.length / spanHours) * 24);
+          } else {
+            launchesPerDay = launches.length;
+          }
+        }
+
+        dom.kpiCoins.classList.remove('skeleton');
+        dom.kpiWhales.classList.remove('skeleton');
+        dom.kpiLaunches.classList.remove('skeleton');
+
+        dom.kpiCoins.textContent = compact(coinCount);
+        dom.kpiWhales.textContent = money(whaleVol);
+        dom.kpiLaunches.textContent = compact(launchesPerDay || launches.length);
+      }
+
+      function setError(msg) {
+        dom.proofError.innerHTML = '<div class="error">' + msg + '</div>';
+        dom.kpiCoins.classList.remove('skeleton');
+        dom.kpiWhales.classList.remove('skeleton');
+        dom.kpiLaunches.classList.remove('skeleton');
+        dom.kpiCoins.textContent = '0';
+        dom.kpiWhales.textContent = '$0.00';
+        dom.kpiLaunches.textContent = '0';
+      }
+
+      async function loadProof() {
+        try {
+          const results = await Promise.allSettled([
+            fetchEndpoint('/zora/trending'),
+            fetchEndpoint('/whale-trades'),
+            fetchEndpoint('/zora/new-coins')
+          ]);
+
+          const trending = results[0].status === 'fulfilled' ? arrayFrom(results[0].value) : [];
+          const whales = results[1].status === 'fulfilled' ? arrayFrom(results[1].value) : [];
+          const launches = results[2].status === 'fulfilled' ? arrayFrom(results[2].value) : [];
+
+          renderSocialProof(trending, whales, launches);
+
+          const errorMessages = results
+            .filter(function (r) { return r.status === 'rejected'; })
+            .map(function (r) { return r.reason && r.reason.message ? r.reason.message : 'Request failed'; });
+
+          if (errorMessages.length) {
+            dom.proofError.innerHTML = '<div class="error">Some feeds are restricted: ' + errorMessages.join(' | ') + '. Add `?api_key=...` if your access requires headers.</div>';
+          }
+        } catch (err) {
+          setError('Unable to load social proof data: ' + err.message);
+        }
+      }
+
+      async function startCheckout() {
+        dom.heroCta.disabled = true;
+        dom.pricingCta.disabled = true;
+        dom.finalCta.disabled = true;
+
+        const email = (dom.heroEmail.value || '').trim();
+
+        try {
+          const payload = {};
+          if (email) payload.email = email;
+
+          const response = await fetch(CHECKOUT_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await response.json().catch(function () {
+            return {};
+          });
+
+          if (!response.ok || !data.url) {
+            throw new Error((data && (data.message || data.error)) || 'Unable to create checkout session.');
+          }
+
+          window.location.href = data.url;
+        } catch (err) {
+          const msg = 'Checkout failed: ' + err.message + ' (success: ' + SUCCESS_URL + ', cancel: ' + CANCEL_URL + ')';
+          dom.heroStatus.textContent = msg;
+          dom.finalStatus.textContent = msg;
+
+          dom.heroCta.disabled = false;
+          dom.pricingCta.disabled = false;
+          dom.finalCta.disabled = false;
+        }
+      }
+
+      function wireCtas() {
+        dom.heroCta.addEventListener('click', function () {
+          startCheckout();
+        });
+
+        dom.pricingCta.addEventListener('click', function () {
+          startCheckout();
+        });
+
+        dom.finalCta.addEventListener('click', function () {
+          startCheckout();
+        });
+
+        document.addEventListener('click', function (event) {
+          const cta = event.target.closest('[data-cta]');
+          if (!cta) return;
+          trackCta(cta.getAttribute('data-cta') || 'cta');
+        });
+      }
+
+      function bootstrap() {
+        apiKey = getApiKey();
+        userId = getUserId();
+        wireCtas();
+        loadProof();
+
+        const subRaw = localStorage.getItem(STORAGE_SUB);
+        if (subRaw) {
+          try {
+            const sub = JSON.parse(subRaw);
+            if (sub && sub.isPro) {
+              dom.heroStatus.textContent = 'Pro access already active on this device.';
+            }
+          } catch (_err) {
+            // ignore invalid cache
+          }
+        }
+      }
+
+      bootstrap();
+    }());
+  </script>
+</body>
+</html>
