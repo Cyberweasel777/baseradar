@@ -490,9 +490,10 @@
   <script>
     (function () {
       const API_BASE = 'https://king-backend.fly.dev/api/botindex';
-      const CHECKOUT_ENDPOINT = 'https://king-backend.fly.dev/api/baseradar/checkout';
-      const SUCCESS_URL = 'https://baseradar.polyhacks.app/success.html';
-      const CANCEL_URL = 'https://baseradar.polyhacks.app/landing.html';
+      const API_KEY = 'botindex_sk_c3c74bbd7abb4a5e77d653b42a2ef077';
+      const CHECKOUT_ENDPOINT = 'https://king-backend.fly.dev/api/payments/checkout?app=baseradar&tier=pro';
+      const SUCCESS_URL = 'https://baseradar.app/success';
+      const CANCEL_URL = 'https://baseradar.app/landing';
       const STORAGE_SUB = 'baseradar.subscription';
       const STORAGE_API_KEY = 'baseradar.apiKey';
       const STORAGE_USER = 'baseradar.userId';
@@ -501,8 +502,8 @@
         isPro: false,
         trending: [],
         expandedCoin: null,
-        apiKey: null,
-        userId: null
+        apiKey: localStorage.getItem(STORAGE_API_KEY) || API_KEY,
+        userId: localStorage.getItem(STORAGE_USER) || null
       };
 
       const dom = {
