@@ -356,6 +356,7 @@
       <div class="cta-row">
         <input id="heroEmail" class="email-input" type="email" inputmode="email" autocomplete="email" placeholder="Email (optional for checkout receipt)">
         <button id="heroCta" class="button" type="button" data-cta="hero-start-trial">Start Your Free Trial</button>
+        <button class="button" type="button" onclick="document.getElementById('cryptoModalLanding').style.display='flex'" data-cta="hero-crypto-pay" style="background:linear-gradient(135deg,#0052ff,#00d4ff);border:none;">Pay with Crypto</button>
         <div class="meta-line">$9.99/mo after 7-day free trial.</div>
       </div>
       <div id="heroStatus" class="status" aria-live="polite"></div>
@@ -466,6 +467,25 @@
         <a class="card" href="https://x.com" target="_blank" rel="noopener" data-cta="landing-twitter-link">Twitter</a>
       </div>
     </section>
+  </div>
+
+  <!-- Crypto Payment Modal -->
+  <div id="cryptoModalLanding" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; justify-content:center; align-items:center;" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#12121a; border:1px solid #1a1a2e; border-radius:12px; padding:2rem; max-width:420px; width:90%; position:relative;">
+      <button onclick="document.getElementById('cryptoModalLanding').style.display='none'" style="position:absolute; top:0.75rem; right:1rem; background:none; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      <h3 style="color:#00d4ff; margin:0 0 0.5rem 0; font-size:1.25rem;">Pay with Crypto</h3>
+      <p style="color:#aaa; margin:0 0 1rem 0; font-size:0.85rem;">Send <strong style="color:#00ff88;">9.99 USDC</strong> on <strong style="color:#0052ff;">Base</strong> to unlock BaseRadar Pro for 30 days.</p>
+      <div style="background:#0a0a0f; border:1px solid #1a1a2e; border-radius:8px; padding:1rem; margin-bottom:1rem;">
+        <div style="color:#888; font-size:0.7rem; margin-bottom:0.25rem;">WALLET ADDRESS (Base Chain)</div>
+        <div style="color:#00d4ff; font-family:monospace; font-size:0.8rem; word-break:break-all; cursor:pointer;" onclick="navigator.clipboard.writeText('0x7E6C8EAc1b1b8E628fa6169eEeDf3cF9638b3Cbd');this.nextElementSibling.style.opacity='1';setTimeout(()=>this.nextElementSibling.style.opacity='0',2000)">0x7E6C8EAc1b1b8E628fa6169eEeDf3cF9638b3Cbd</div>
+        <div style="color:#00ff88; font-size:0.7rem; margin-top:0.25rem; opacity:0; transition:opacity 0.3s;">Copied!</div>
+      </div>
+      <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+        <a href="https://pay.coinbase.com/buy/select-asset?appId=baseradar&addresses=%7B%220x7E6C8EAc1b1b8E628fa6169eEeDf3cF9638b3Cbd%22%3A%5B%22base%22%5D%7D&assets=%5B%22USDC%22%5D&presetFiatAmount=9.99" target="_blank" rel="noopener" class="button" style="flex:1; text-align:center; font-size:0.85rem; background:#0052ff; border:none; text-decoration:none;">Coinbase Wallet</a>
+        <button class="button" style="flex:1; font-size:0.85rem; background:transparent; border:1px solid #1a1a2e;" onclick="navigator.clipboard.writeText('0x7E6C8EAc1b1b8E628fa6169eEeDf3cF9638b3Cbd')">Copy Address</button>
+      </div>
+      <p style="color:#666; font-size:0.7rem; margin:0;">After sending, your access activates within 5 minutes. USDC on Base chain only.</p>
+    </div>
   </div>
 
   <script>

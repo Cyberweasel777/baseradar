@@ -422,6 +422,26 @@
       <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
         <button class="button secondary" type="button" id="subscriptionToggle" data-cta="subscription-toggle">Switch to Pro View</button>
         <button class="button" type="button" id="getProButton" data-cta="header-get-pro">Get Pro</button>
+        <button class="button" type="button" id="cryptoPayButton" data-cta="header-crypto-pay" style="background:linear-gradient(135deg,#0052ff,#00d4ff);border:none;">Pay with Crypto</button>
+      </div>
+
+      <!-- Crypto Payment Modal -->
+      <div id="cryptoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; justify-content:center; align-items:center;">
+        <div style="background:#12121a; border:1px solid #1a1a2e; border-radius:12px; padding:2rem; max-width:420px; width:90%; position:relative;">
+          <button id="closeCryptoModal" style="position:absolute; top:0.75rem; right:1rem; background:none; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+          <h3 style="color:#00d4ff; margin:0 0 0.5rem 0; font-size:1.25rem;">Pay with Crypto</h3>
+          <p style="color:#aaa; margin:0 0 1rem 0; font-size:0.85rem;">Send <strong style="color:#00ff88;">9.99 USDC</strong> on <strong style="color:#0052ff;">Base</strong> to unlock BaseRadar Pro for 30 days.</p>
+          <div style="background:#0a0a0f; border:1px solid #1a1a2e; border-radius:8px; padding:1rem; margin-bottom:1rem;">
+            <div style="color:#888; font-size:0.7rem; margin-bottom:0.25rem;">WALLET ADDRESS (Base Chain)</div>
+            <div id="walletAddress" style="color:#00d4ff; font-family:monospace; font-size:0.8rem; word-break:break-all; cursor:pointer;" title="Click to copy">0x7E6C8EAc1b1b8E628fa6169eEeDf3cF9638b3Cbd</div>
+            <div id="copyFeedback" style="color:#00ff88; font-size:0.7rem; margin-top:0.25rem; opacity:0; transition:opacity 0.3s;">Copied!</div>
+          </div>
+          <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+            <a href="https://pay.coinbase.com/buy/select-asset?appId=baseradar&addresses=%7B%220x7E6C8EAc1b1b8E628fa6169eEeDf3cF9638b3Cbd%22%3A%5B%22base%22%5D%7D&assets=%5B%22USDC%22%5D&presetFiatAmount=9.99" target="_blank" rel="noopener" class="button" style="flex:1; text-align:center; font-size:0.85rem; background:#0052ff; border:none; text-decoration:none;">Coinbase Wallet</a>
+            <button id="copyWalletBtn" class="button" style="flex:1; font-size:0.85rem; background:transparent; border:1px solid #1a1a2e;">Copy Address</button>
+          </div>
+          <p style="color:#666; font-size:0.7rem; margin:0;">After sending, your access activates within 5 minutes. USDC on Base chain only. Contact @cyber_weasel on X if you need help.</p>
+        </div>
       </div>
     </header>
 
@@ -1218,6 +1238,40 @@
         dom.getProButton.addEventListener('click', function () {
           startCheckout('');
         });
+
+        // Crypto payment modal
+        var cryptoModal = document.getElementById('cryptoModal');
+        var cryptoPayBtn = document.getElementById('cryptoPayButton');
+        var closeCryptoBtn = document.getElementById('closeCryptoModal');
+        var walletAddr = document.getElementById('walletAddress');
+        var copyBtn = document.getElementById('copyWalletBtn');
+        var copyFeedback = document.getElementById('copyFeedback');
+
+        if (cryptoPayBtn) {
+          cryptoPayBtn.addEventListener('click', function () {
+            cryptoModal.style.display = 'flex';
+            ctaTrack('crypto-pay-open');
+          });
+        }
+        if (closeCryptoBtn) {
+          closeCryptoBtn.addEventListener('click', function () {
+            cryptoModal.style.display = 'none';
+          });
+        }
+        if (cryptoModal) {
+          cryptoModal.addEventListener('click', function (e) {
+            if (e.target === cryptoModal) cryptoModal.style.display = 'none';
+          });
+        }
+        function copyWallet() {
+          navigator.clipboard.writeText('0x7E6C8EAc1b1b8E628fa6169eEeDf3cF9638b3Cbd').then(function () {
+            copyFeedback.style.opacity = '1';
+            setTimeout(function () { copyFeedback.style.opacity = '0'; }, 2000);
+          });
+          ctaTrack('crypto-copy-wallet');
+        }
+        if (walletAddr) walletAddr.addEventListener('click', copyWallet);
+        if (copyBtn) copyBtn.addEventListener('click', copyWallet);
 
         dom.subscriptionToggle.addEventListener('click', function () {
           state.isPro = !state.isPro;
