@@ -379,6 +379,145 @@
       min-height: 1rem;
     }
 
+    .defi-table-holder {
+      position: relative;
+    }
+
+    .locked-row {
+      filter: blur(3px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .tvl-summary {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .tvl-value {
+      font-size: 1.95rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      line-height: 1.1;
+    }
+
+    .tvl-trends {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .trend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 0.18rem 0.55rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .trend-chip.positive {
+      color: var(--success);
+      border-color: rgba(0, 255, 136, 0.35);
+      background: rgba(0, 255, 136, 0.08);
+    }
+
+    .trend-chip.negative {
+      color: var(--danger);
+      border-color: rgba(255, 68, 68, 0.35);
+      background: rgba(255, 68, 68, 0.08);
+    }
+
+    .trend-chip.neutral {
+      color: var(--primary);
+      border-color: rgba(0, 212, 255, 0.3);
+      background: rgba(0, 212, 255, 0.08);
+    }
+
+    .sparkline-wrap {
+      margin-top: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.015);
+      border-radius: 0.7rem;
+      padding: 0.55rem;
+    }
+
+    .sparkline {
+      width: 100%;
+      height: 72px;
+      display: block;
+    }
+
+    .sparkline .area {
+      fill: rgba(0, 212, 255, 0.12);
+    }
+
+    .sparkline .line {
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 2.2;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.7rem;
+    }
+
+    .flow-column {
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 0.8rem;
+      padding: 0.7rem;
+      background: rgba(255, 255, 255, 0.015);
+      display: grid;
+      gap: 0.45rem;
+      min-height: 205px;
+    }
+
+    .flow-title {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .flow-title.positive { color: var(--success); }
+    .flow-title.negative { color: var(--danger); }
+
+    .flow-item {
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 0.7rem;
+      padding: 0.55rem;
+      display: grid;
+      gap: 0.22rem;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .flow-name {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #e6f4ff;
+    }
+
+    .flow-change {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .flow-change .up { color: var(--success); }
+    .flow-change .down { color: var(--danger); }
+
+    .mini-note {
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
     .footer {
       margin-top: 1.35rem;
       border-top: 1px solid var(--border);
@@ -398,6 +537,10 @@
     @media (min-width: 680px) {
       .stats {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .flow-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -494,6 +637,40 @@
         </div>
         <div id="correlationContent"></div>
       </section>
+
+      <section class="panel wide" id="yieldPanel">
+        <div class="panel-head">
+          <h2>💰 Top Yield Pools on Base</h2>
+          <span class="badge" id="yieldBadge">PRO</span>
+        </div>
+        <div class="table-wrap" id="yieldContent"></div>
+        <div class="status-line" id="yieldStatus"></div>
+      </section>
+
+      <section class="panel wide" id="revenuePanel">
+        <div class="panel-head">
+          <h2>🧾 Protocol Revenue Leaderboard</h2>
+          <span class="badge free">FREE</span>
+        </div>
+        <div class="table-wrap" id="revenueContent"></div>
+        <div class="status-line" id="revenueStatus"></div>
+      </section>
+
+      <section class="panel" id="tvlPanel">
+        <div class="panel-head">
+          <h2>🛰️ Base Chain TVL Tracker</h2>
+          <span class="badge free">FREE</span>
+        </div>
+        <div id="tvlContent"></div>
+      </section>
+
+      <section class="panel" id="smartMoneyPanel">
+        <div class="panel-head">
+          <h2>🧠 Smart Money Flows</h2>
+          <span class="badge free">FREE</span>
+        </div>
+        <div id="smartMoneyContent"></div>
+      </section>
     </main>
 
     <footer class="footer">
@@ -517,6 +694,11 @@
       const STORAGE_SUB = 'baseradar.subscription';
       const STORAGE_API_KEY = 'baseradar.apiKey';
       const STORAGE_USER = 'baseradar.userId';
+      const LLAMA_YIELDS_URL = 'https://yields.llama.fi/pools';
+      const LLAMA_BASE_FEES_URL = 'https://api.llama.fi/overview/fees/base?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyFees';
+      const LLAMA_CHAINS_URL = 'https://api.llama.fi/v2/chains';
+      const LLAMA_BASE_HISTORY_URL = 'https://api.llama.fi/v2/historicalChainTvl/Base';
+      const LLAMA_PROTOCOLS_URL = 'https://api.llama.fi/protocols';
 
       const state = {
         isPro: false,
@@ -540,6 +722,13 @@
         whaleBadge: document.getElementById('whaleBadge'),
         correlationContent: document.getElementById('correlationContent'),
         corrBadge: document.getElementById('corrBadge'),
+        yieldContent: document.getElementById('yieldContent'),
+        yieldStatus: document.getElementById('yieldStatus'),
+        yieldBadge: document.getElementById('yieldBadge'),
+        revenueContent: document.getElementById('revenueContent'),
+        revenueStatus: document.getElementById('revenueStatus'),
+        tvlContent: document.getElementById('tvlContent'),
+        smartMoneyContent: document.getElementById('smartMoneyContent'),
         getProButton: document.getElementById('getProButton'),
         subscriptionToggle: document.getElementById('subscriptionToggle')
       };
@@ -705,6 +894,406 @@
         return payload;
       }
 
+      async function fetchLlamaJson(url) {
+        const response = await fetch(url);
+        const payload = await response.json().catch(function () {
+          return {};
+        });
+        if (!response.ok) {
+          const message = payload && (payload.message || payload.error) ? (payload.message || payload.error) : 'Request failed';
+          throw new Error(message);
+        }
+        return payload;
+      }
+
+      function formatSignedMoney(value) {
+        const num = toNumber(value, 0);
+        if (!num) return '$0.00';
+        return (num > 0 ? '+' : '-') + formatMoney(Math.abs(num));
+      }
+
+      function readTvlValue(raw) {
+        if (typeof raw === 'number') return raw;
+        if (!raw || typeof raw !== 'object') return 0;
+        if (typeof raw.tvl === 'number') return raw.tvl;
+        if (typeof raw.totalLiquidityUSD === 'number') return raw.totalLiquidityUSD;
+        return 0;
+      }
+
+      function extractBaseTvl(protocol) {
+        if (!protocol || typeof protocol !== 'object') return 0;
+        const sources = [protocol.chainTvls, protocol.currentChainTvls];
+        for (const source of sources) {
+          if (!source || typeof source !== 'object') continue;
+          const keys = Object.keys(source).filter(function (key) {
+            return String(key).toLowerCase().indexOf('base') === 0;
+          });
+          if (!keys.length) continue;
+          return keys.reduce(function (sum, key) {
+            return sum + toNumber(readTvlValue(source[key]), 0);
+          }, 0);
+        }
+        return toNumber(protocol.tvl, 0);
+      }
+
+      function buildSparklineSvg(values) {
+        const clean = (Array.isArray(values) ? values : [])
+          .map(function (value) { return toNumber(value, 0); })
+          .filter(function (value) { return Number.isFinite(value); });
+        if (clean.length < 2) return '';
+
+        const width = 320;
+        const height = 72;
+        const pad = 4;
+        const min = Math.min.apply(null, clean);
+        const max = Math.max.apply(null, clean);
+        const span = (max - min) || 1;
+        const step = (width - (pad * 2)) / Math.max(clean.length - 1, 1);
+
+        const points = clean.map(function (value, idx) {
+          const x = pad + (idx * step);
+          const y = height - pad - (((value - min) / span) * (height - (pad * 2)));
+          return x.toFixed(2) + ',' + y.toFixed(2);
+        });
+
+        const areaPoints = [
+          pad.toFixed(2) + ',' + (height - pad).toFixed(2)
+        ].concat(points).concat([
+          (width - pad).toFixed(2) + ',' + (height - pad).toFixed(2)
+        ]);
+
+        return (
+          '<svg class="sparkline" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Base TVL trend">' +
+          '<polygon class="area" points="' + areaPoints.join(' ') + '"></polygon>' +
+          '<polyline class="line" points="' + points.join(' ') + '"></polyline>' +
+          '</svg>'
+        );
+      }
+
+      function createTrendChip(label, value) {
+        const chip = document.createElement('span');
+        const numeric = toNumber(value, 0);
+        let klass = 'neutral';
+        let marker = '•';
+        if (numeric > 0) {
+          klass = 'positive';
+          marker = '▲';
+        } else if (numeric < 0) {
+          klass = 'negative';
+          marker = '▼';
+        }
+        chip.className = 'trend-chip ' + klass;
+        chip.textContent = label + ': ' + marker + ' ' + formatPercent(numeric);
+        return chip;
+      }
+
+      function renderYieldPools(payload) {
+        const pools = (payload && Array.isArray(payload.data) ? payload.data : [])
+          .filter(function (pool) { return String(pool.chain || '').toLowerCase() === 'base'; })
+          .sort(function (a, b) {
+            return toNumber(b.apy, -9999) - toNumber(a.apy, -9999);
+          });
+
+        dom.yieldContent.innerHTML = '';
+        if (!pools.length) {
+          dom.yieldContent.appendChild(createError('No Base yield pools available right now.'));
+          dom.yieldStatus.textContent = '';
+          return;
+        }
+
+        const rows = pools;
+        const table = document.createElement('table');
+        table.innerHTML = [
+          '<thead><tr><th>Protocol</th><th>Pool</th><th>APY %</th><th>TVL ($)</th><th>7d Change</th></tr></thead>',
+          '<tbody></tbody>'
+        ].join('');
+
+        const tbody = table.querySelector('tbody');
+        rows.forEach(function (pool, idx) {
+          const protocol = pickField(pool, ['project'], 'Unknown');
+          const symbol = pickField(pool, ['symbol'], 'N/A');
+          const poolMeta = pickField(pool, ['poolMeta'], '');
+          const poolLabel = poolMeta ? (symbol + ' · ' + poolMeta) : symbol;
+          const apy = toNumber(pool.apy, 0);
+          const tvl = toNumber(pool.tvlUsd, 0);
+          const change7dRaw = pool.apyPct7D;
+          const hasChange7d = Number.isFinite(Number(change7dRaw));
+          const change7d = hasChange7d ? Number(change7dRaw) : 0;
+          const changeColor = hasChange7d
+            ? (change7d >= 0 ? 'var(--success)' : 'var(--danger)')
+            : 'var(--primary)';
+          const changeLabel = hasChange7d ? formatPercent(change7d) : 'N/A';
+
+          const row = document.createElement('tr');
+          if (!state.isPro && idx >= 10) {
+            row.className = 'locked-row';
+          }
+
+          row.innerHTML =
+            '<td>' + protocol + '</td>' +
+            '<td>' + poolLabel + '</td>' +
+            '<td style="color:' + (apy >= 0 ? 'var(--success)' : 'var(--danger)') + '">' + formatPercent(apy) + '</td>' +
+            '<td>' + formatMoney(tvl) + '</td>' +
+            '<td style="color:' + changeColor + '">' + changeLabel + '</td>';
+
+          tbody.appendChild(row);
+        });
+
+        const holder = document.createElement('div');
+        holder.className = 'defi-table-holder';
+        holder.appendChild(table);
+
+        if (!state.isPro && pools.length > 10) {
+          const overlay = document.createElement('div');
+          overlay.className = 'overlay';
+          overlay.innerHTML =
+            '<div class="overlay-content">' +
+            '<strong>🔒 Unlock full Base yield rankings</strong>' +
+            '<div class="notice">Free view includes top 10 pools. Pro unlocks the full leaderboard.</div>' +
+            '<button type="button" class="button" data-cta="yield-unlock">Unlock Pro</button>' +
+            '</div>';
+          holder.appendChild(overlay);
+          overlay.querySelector('button').addEventListener('click', function () {
+            startCheckout('');
+          });
+        }
+
+        dom.yieldContent.appendChild(holder);
+        dom.yieldStatus.textContent = state.isPro
+          ? ('Showing top ' + rows.length + ' Base pools by APY. Auto-refresh every 5 minutes.')
+          : ('Showing top 10 free. ' + pools.length + ' pools detected on Base. Auto-refresh every 5 minutes.');
+      }
+
+      async function loadYieldPools() {
+        dom.yieldContent.innerHTML = '';
+        dom.yieldContent.appendChild(makeSkeletonLines(10));
+        dom.yieldStatus.textContent = 'Loading Base yield pools...';
+
+        try {
+          const payload = await fetchLlamaJson(LLAMA_YIELDS_URL);
+          renderYieldPools(payload);
+        } catch (err) {
+          dom.yieldContent.innerHTML = '';
+          dom.yieldContent.appendChild(createError('Unable to load yield pools: ' + err.message));
+          dom.yieldStatus.textContent = '';
+        }
+      }
+
+      function renderProtocolRevenue(payload) {
+        const protocols = (payload && Array.isArray(payload.protocols) ? payload.protocols : [])
+          .sort(function (a, b) {
+            return toNumber(b.total24h, 0) - toNumber(a.total24h, 0);
+          })
+          .slice(0, 10);
+
+        dom.revenueContent.innerHTML = '';
+        if (!protocols.length) {
+          dom.revenueContent.appendChild(createError('No protocol fee data available right now.'));
+          dom.revenueStatus.textContent = '';
+          return;
+        }
+
+        const table = document.createElement('table');
+        table.innerHTML = [
+          '<thead><tr><th>Protocol</th><th>24h Fees ($)</th><th>7d Change (%)</th><th>Total Fees ($)</th><th>Category</th></tr></thead>',
+          '<tbody></tbody>'
+        ].join('');
+
+        const tbody = table.querySelector('tbody');
+        protocols.forEach(function (item) {
+          const protocol = pickField(item, ['displayName', 'name'], 'Unknown');
+          const fees24h = toNumber(item.total24h, 0);
+          const change7dRaw = item.change_7d;
+          const hasChange7d = Number.isFinite(Number(change7dRaw));
+          const change7d = hasChange7d ? Number(change7dRaw) : 0;
+          const totalFees = toNumber(item.totalAllTime, 0);
+          const category = pickField(item, ['category'], 'Unknown');
+          const changeColor = hasChange7d
+            ? (change7d >= 0 ? 'var(--success)' : 'var(--danger)')
+            : 'var(--primary)';
+          const changeLabel = hasChange7d ? formatPercent(change7d) : 'N/A';
+
+          const row = document.createElement('tr');
+          row.innerHTML =
+            '<td>' + protocol + '</td>' +
+            '<td>' + formatMoney(fees24h) + '</td>' +
+            '<td style="color:' + changeColor + '">' + changeLabel + '</td>' +
+            '<td>' + formatMoney(totalFees) + '</td>' +
+            '<td>' + category + '</td>';
+          tbody.appendChild(row);
+        });
+
+        dom.revenueContent.appendChild(table);
+        dom.revenueStatus.textContent = 'Top 10 Base protocols by 24h fees.';
+      }
+
+      async function loadProtocolRevenue() {
+        dom.revenueContent.innerHTML = '';
+        dom.revenueContent.appendChild(makeSkeletonLines(8));
+        dom.revenueStatus.textContent = 'Loading protocol fee data...';
+
+        try {
+          const payload = await fetchLlamaJson(LLAMA_BASE_FEES_URL);
+          renderProtocolRevenue(payload);
+        } catch (err) {
+          dom.revenueContent.innerHTML = '';
+          dom.revenueContent.appendChild(createError('Unable to load protocol revenue: ' + err.message));
+          dom.revenueStatus.textContent = '';
+        }
+      }
+
+      function renderBaseTvlTracker(baseChain, history) {
+        dom.tvlContent.innerHTML = '';
+        if (!baseChain) {
+          dom.tvlContent.appendChild(createError('No Base chain TVL data available right now.'));
+          return;
+        }
+
+        const historyRows = Array.isArray(history) ? history.slice(-30) : [];
+        const tvlSeries = historyRows
+          .map(function (point) { return toNumber(point && point.tvl, 0); })
+          .filter(function (value) { return Number.isFinite(value); });
+
+        const latestTvl = tvlSeries.length ? tvlSeries[tvlSeries.length - 1] : toNumber(baseChain.tvl, 0);
+        const previous1d = tvlSeries.length > 1 ? tvlSeries[tvlSeries.length - 2] : null;
+        const previous7d = tvlSeries.length > 7 ? tvlSeries[tvlSeries.length - 8] : null;
+
+        const change1d = (previous1d && previous1d !== 0) ? ((latestTvl - previous1d) / previous1d) * 100 : 0;
+        const change7d = (previous7d && previous7d !== 0) ? ((latestTvl - previous7d) / previous7d) * 100 : 0;
+
+        const summary = document.createElement('div');
+        summary.className = 'tvl-summary';
+        summary.innerHTML =
+          '<div class="tvl-value">' + formatMoney(latestTvl) + '</div>' +
+          '<div class="mini-note">Current total TVL on Base</div>';
+
+        const trendWrap = document.createElement('div');
+        trendWrap.className = 'tvl-trends';
+        trendWrap.appendChild(createTrendChip('24h', change1d));
+        trendWrap.appendChild(createTrendChip('7d', change7d));
+        summary.appendChild(trendWrap);
+
+        const sparkWrap = document.createElement('div');
+        sparkWrap.className = 'sparkline-wrap';
+        const sparkSvg = buildSparklineSvg(tvlSeries);
+        if (sparkSvg) {
+          sparkWrap.innerHTML = sparkSvg + '<div class="mini-note">30-day TVL trend (daily points)</div>';
+        } else {
+          sparkWrap.innerHTML = '<div class="mini-note">Not enough historical points for sparkline.</div>';
+        }
+
+        dom.tvlContent.appendChild(summary);
+        dom.tvlContent.appendChild(sparkWrap);
+      }
+
+      async function loadBaseTvlTracker() {
+        dom.tvlContent.innerHTML = '';
+        dom.tvlContent.appendChild(makeSkeletonLines(5));
+
+        try {
+          const responses = await Promise.all([
+            fetchLlamaJson(LLAMA_CHAINS_URL),
+            fetchLlamaJson(LLAMA_BASE_HISTORY_URL)
+          ]);
+          const chains = Array.isArray(responses[0]) ? responses[0] : [];
+          const baseChain = chains.find(function (item) {
+            return String(item && item.name || '').toLowerCase() === 'base';
+          });
+          renderBaseTvlTracker(baseChain, responses[1]);
+        } catch (err) {
+          dom.tvlContent.innerHTML = '';
+          dom.tvlContent.appendChild(createError('Unable to load Base TVL tracker: ' + err.message));
+        }
+      }
+
+      function renderFlowColumn(title, typeClass, rows) {
+        const column = document.createElement('div');
+        column.className = 'flow-column';
+        const head = document.createElement('h3');
+        head.className = 'flow-title ' + typeClass;
+        head.textContent = title;
+        column.appendChild(head);
+
+        if (!rows.length) {
+          const empty = document.createElement('div');
+          empty.className = 'mini-note';
+          empty.textContent = 'No protocols in this direction right now.';
+          column.appendChild(empty);
+          return column;
+        }
+
+        rows.forEach(function (row) {
+          const card = document.createElement('div');
+          card.className = 'flow-item';
+          const pctClass = row.changePct >= 0 ? 'up' : 'down';
+          card.innerHTML =
+            '<div class="flow-name">' + row.name + '</div>' +
+            '<div class="flow-change">Δ TVL: <span class="' + pctClass + '">' + formatSignedMoney(row.changeUsd) + '</span></div>' +
+            '<div class="flow-change">% Change: <span class="' + pctClass + '">' + formatPercent(row.changePct) + '</span></div>';
+          column.appendChild(card);
+        });
+
+        return column;
+      }
+
+      function renderSmartMoneyFlows(protocols) {
+        const baseProtocols = (Array.isArray(protocols) ? protocols : [])
+          .filter(function (protocol) {
+            return Array.isArray(protocol && protocol.chains) && protocol.chains.some(function (chain) {
+              return String(chain).toLowerCase() === 'base';
+            });
+          })
+          .map(function (protocol) {
+            const baseTvl = extractBaseTvl(protocol);
+            const changePct = toNumber(protocol && protocol.change_1d, 0);
+            return {
+              name: pickField(protocol, ['name'], 'Unknown'),
+              baseTvl: baseTvl,
+              changePct: changePct,
+              changeUsd: baseTvl * (changePct / 100)
+            };
+          })
+          .filter(function (row) {
+            return Number.isFinite(row.changePct) && Number.isFinite(row.baseTvl) && row.baseTvl > 0;
+          });
+
+        const inflows = baseProtocols
+          .filter(function (row) { return row.changePct > 0; })
+          .sort(function (a, b) { return b.changePct - a.changePct; })
+          .slice(0, 5);
+
+        const outflows = baseProtocols
+          .filter(function (row) { return row.changePct < 0; })
+          .sort(function (a, b) { return a.changePct - b.changePct; })
+          .slice(0, 5);
+
+        dom.smartMoneyContent.innerHTML = '';
+        if (!inflows.length && !outflows.length) {
+          dom.smartMoneyContent.appendChild(createError('No smart money flow data available right now.'));
+          return;
+        }
+
+        const grid = document.createElement('div');
+        grid.className = 'flow-grid';
+        grid.appendChild(renderFlowColumn('Inflows', 'positive', inflows));
+        grid.appendChild(renderFlowColumn('Outflows', 'negative', outflows));
+
+        dom.smartMoneyContent.appendChild(grid);
+      }
+
+      async function loadSmartMoneyFlows() {
+        dom.smartMoneyContent.innerHTML = '';
+        dom.smartMoneyContent.appendChild(makeSkeletonLines(8));
+
+        try {
+          const payload = await fetchLlamaJson(LLAMA_PROTOCOLS_URL);
+          renderSmartMoneyFlows(payload);
+        } catch (err) {
+          dom.smartMoneyContent.innerHTML = '';
+          dom.smartMoneyContent.appendChild(createError('Unable to load smart money flows: ' + err.message));
+        }
+      }
+
       async function startCheckout(ctaName) {
         dom.getProButton.disabled = true;
         dom.getProButton.textContent = 'Redirecting...';
@@ -736,10 +1325,12 @@
           dom.subscriptionToggle.textContent = 'Switch to Free View';
           dom.trendingBadge.textContent = 'PRO';
           dom.newBadge.textContent = 'PRO';
+          dom.yieldBadge.textContent = 'PRO';
         } else {
           dom.subscriptionToggle.textContent = 'Switch to Pro View';
           dom.trendingBadge.textContent = 'FREE';
           dom.newBadge.textContent = 'FREE (Limited)';
+          dom.yieldBadge.textContent = 'FREE + PRO';
         }
       }
 
@@ -1281,6 +1872,7 @@
           loadNewLaunches();
           loadWhales();
           loadCorrelation();
+          loadYieldPools();
         });
 
         dom.trendingContent.addEventListener('click', function (event) {
@@ -1305,12 +1897,20 @@
           loadTrending(true),
           loadNewLaunches(),
           loadWhales(),
-          loadCorrelation()
+          loadCorrelation(),
+          loadYieldPools(),
+          loadProtocolRevenue(),
+          loadBaseTvlTracker(),
+          loadSmartMoneyFlows()
         ]);
 
         setInterval(function () {
           loadTrending(false);
         }, 60000);
+
+        setInterval(function () {
+          loadYieldPools();
+        }, 300000);
       }
 
       initialize();
